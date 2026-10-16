@@ -1,0 +1,113 @@
+A51 MACRO ASSEMBLER  HELLO_INT0                                                           09/18/2026 13:21:38 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\hello-int0.obj
+ASSEMBLER INVOKED BY: F:\MCU\STC15F2K60\Keil_v5\C51\BIN\A51.EXE ..\hello-blink2\hello-int0.asm SET(SMALL) DEBUG PRINT(.\
+                      Listings\hello-int0.lst) OBJECT(.\Objects\hello-int0.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+                       2     
+                       3     
+                       4     
+                       5     
+                       6     
+                       7     
+                       8     
+                       9     
+                      10     
+                      11     
+                      12     ;SFR Register addresses
+                      13     
+  0094                14     P0M0 EQU 94h ;constant (text substitution)
+  0093                15     P0M1 EQU 93h ;constant (text substitution)
+                      16     
+                      17     ; (already defined) PCON EQU 87h ; Power Control Register Address. (non bit settable)
+                      18     ; (already defined) IE EQU A8H ; page 392 - 00h value is after reset
+                      19     
+0000                  20     ORG 0000h
+0000 020100           21         LJMP SETUP
+                      22     
+0003                  23     ORG 0003h ; External Interrupt0
+0003 020117           24         LJMP EXTINT0
+                      25     
+                      26     ; After resert SP is 07H. set to 3Fh for: 
+                      27     ; 1 To Protect the 4 Register Banks (00H - 1FH),
+                      28     ; 2 To Protect Bit-Addressable RAM (20H - 2FH),
+                      29     ; 3 To Maximize Scratchpad RAM (30H - 3FH)
+                      30     
+0100                  31     ORG 0100H ; skipping from 00 to FF (first 256 bytes - mainly are SFRs or Interrupt handle c
+                             ode)
+0100                  32     SETUP:
+0100 75813F           33         MOV SP, #3Fh 
+                      34         ; P0.1 to strong pull-output 
+                      35         ;      - up to 20mA (ex of connecting to a red led (Vf=2.5) + 1kOhm resistence, Takes 2
+                             .5mA I = (5V-2.5V)/1000Ohm = 2.5mA)
+0103 759402           36         MOV P0M0, #00000010b
+0106 759300           37         MOV P0M1, #00000000b
+                      38     
+                      39         ; enable global interrupts IE and enable INT0 (External Interrupt 0  IT0 = 0: both risi
+                             ng and falling edges)
+                      40         ;SETB EX0 ; IE.0
+                      41         ;SETB EA  ; IE.7 EA (enable interrupt) -  SETB -> Set Bit
+0109 43A881           42         ORL IE,#10000001b ; Logical OR accumulator with immediate data to accumulator (Direct-A
+                             ddress-Destination Style where accumulator is bypassed!)
+010C D288             43         SETB IT0 ; Setting INT0 interrupt type  - Falling only TCON.0
+                      44     
+                      45     ; Variant 1, Endless loop
+                      46     ;MAIN_LOOP:
+                      47     ;       NOP
+                      48     ;       LJMP MAIN_LOOP
+                      49     
+                      50     ; Variant 2 - main loop in PowerDown (PD mode): Datasheet Chapter 2.3
+010E                  51     POWER_DOWN: 
+010E 438702           52         ORL PCON, #00000010b ; Power Down (bit 1 in PCON register)
+0111 00               53             NOP
+A51 MACRO ASSEMBLER  HELLO_INT0                                                           09/18/2026 13:21:38 PAGE     2
+
+                      54             
+                      55             ; Execution is resumed here after the ISR..
+0112 00               56             NOP
+0113 00               57             NOP
+0114 02010E           58         LJMP POWER_DOWN; go and Power Down again
+                      59         
+                      60     
+0117                  61     EXTINT0:
+0117 B281             62         CPL P0.1 ; Led On/Off (CPL = Complement Accumulator (ex accumulator had 01011100b after
+                              CPL gets 10100011b))
+0119                  63     WAIT_INTO_HIGH:
+0119 00               64             NOP
+011A 30B2FC           65             JNB P3.2, WAIT_INTO_HIGH; loop until INT0 pin goes high again
+011D 32               66         RETI
+                      67     
+                      68     END
+                             
+                             
+A51 MACRO ASSEMBLER  HELLO_INT0                                                           09/18/2026 13:21:38 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+EXTINT0. . . . . .  C ADDR   0117H   A   
+IE . . . . . . . .  D ADDR   00A8H   A   
+IT0. . . . . . . .  B ADDR   0088H.0 A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P0M0 . . . . . . .  N NUMB   0094H   A   
+P0M1 . . . . . . .  N NUMB   0093H   A   
+P3 . . . . . . . .  D ADDR   00B0H   A   
+PCON . . . . . . .  D ADDR   0087H   A   
+POWER_DOWN . . . .  C ADDR   010EH   A   
+SETUP. . . . . . .  C ADDR   0100H   A   
+SP . . . . . . . .  D ADDR   0081H   A   
+WAIT_INTO_HIGH . .  C ADDR   0119H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

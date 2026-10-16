@@ -1,0 +1,80 @@
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                    10/12/2026  13:00:57  PAGE 1
+
+
+BL51 BANKED LINKER/LOCATER V6.22.4.0, INVOKED BY:
+F:\MCU\STC15F2K60\KEIL_V5\C51\BIN\BL51.EXE .\Objects\clockexamples.obj, .\Objects\simple-vram.obj TO .\Objects\clkoutput
+>> -examples PRINT (.\Listings\clkoutput-examples.m51) RAMSIZE (256)
+
+
+INPUT MODULES INCLUDED:
+  .\Objects\clockexamples.obj (CLOCKEXAMPLES)
+  .\Objects\simple-vram.obj (SIMPLE_VRAM)
+
+
+LINK MAP OF MODULE:  .\Objects\clkoutput-examples (CLOCKEXAMPLES)
+
+
+            TYPE    BASE      LENGTH    RELOCATION   SEGMENT NAME
+            -----------------------------------------------------
+
+            * * * * * * *   D A T A   M E M O R Y   * * * * * * *
+            REG     0000H     0008H     ABSOLUTE     "REG BANK 0"
+
+            * * * * * * *   C O D E   M E M O R Y   * * * * * * *
+            CODE    0000H     011BH     ABSOLUTE     
+* OVERLAP * CODE    0000H     010CH     ABSOLUTE     
+
+
+
+SYMBOL TABLE OF MODULE:  .\Objects\clkoutput-examples (CLOCKEXAMPLES)
+
+  VALUE           TYPE          NAME
+  ----------------------------------
+
+  -------         MODULE        CLOCKEXAMPLES
+  N:008EH         SYMBOL        AUXR
+  N:0097H         SYMBOL        CLK_DIV
+  N:FCA5H         SYMBOL        F14KHZ
+  N:FF10H         SYMBOL        F38_4KHZ
+  N:008FH         SYMBOL        INT_CLK0
+  C:0117H         SYMBOL        MAIN_LOOP
+  C:0100H         SYMBOL        SETUP
+  D:008CH         SYMBOL        TH0
+  D:008AH         SYMBOL        TL0
+  D:0089H         SYMBOL        TMOD
+  B:0088H.4       SYMBOL        TR0
+  C:0000H         LINE#         20
+  C:0100H         LINE#         25
+  C:0103H         LINE#         27
+  C:0106H         LINE#         32
+  C:0109H         LINE#         33
+  C:010CH         LINE#         34
+  C:010FH         LINE#         35
+  C:0112H         LINE#         36
+  C:0115H         LINE#         37
+  C:0117H         LINE#         42
+  C:0118H         LINE#         43
+  -------         ENDMOD        CLOCKEXAMPLES
+
+  -------         MODULE        SIMPLE_VRAM
+  C:0100H         SYMBOL        LMATRIX_1388A
+  C:0100H         SYMBOL        MAIN_LOOP
+BL51 BANKED LINKER/LOCATER V6.22.4.0                                                  10/12/2026  13:00:57  PAGE 2
+
+
+  C:0104H         SYMBOL        VRAM_DATA
+  C:0000H         LINE#         4
+  C:0100H         LINE#         14
+  C:0101H         LINE#         15
+  -------         ENDMOD        SIMPLE_VRAM
+
+*** WARNING L5: CODE SPACE MEMORY OVERLAP
+    FROM:    0000H
+    TO:      011AH
+
+******************************************************************************
+* RESTRICTED VERSION WITH 0800H BYTE CODE SIZE LIMIT; USED: 002DH BYTE ( 2%) *
+******************************************************************************
+
+Program Size: data=8.0 xdata=0 code=551
+LINK/LOCATE RUN COMPLETE.  1 WARNING(S),  0 ERROR(S)

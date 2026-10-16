@@ -1,0 +1,133 @@
+A51 MACRO ASSEMBLER  SIMPLE_VRAM02                                                        10/15/2026 09:43:56 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\simple-vram02.obj
+ASSEMBLER INVOKED BY: F:\MCU\STC15F2K60\Keil_v5\C51\BIN\A51.EXE simple-vram02.a51 SET(SMALL) DEBUG PRINT(.\Listings\simp
+                      le-vram02.lst) OBJECT(.\Objects\simple-vram02.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+  0093                 1     P0M1 EQU 93h
+  0094                 2     P0M0 EQU 94h
+  0091                 3     P1M1 EQU 91h
+  0092                 4     P1M0 EQU 92h
+                       5     
+0000                   6     ORG 0000h
+0000 020100            7         LJMP LMATRIX_1388A
+                       8             
+0100                   9     ORG 0100h
+0100                  10     LMATRIX_1388A:
+                      11         ; configure cols to strong push pull output "01" 
+                      12         ; and raws to open drain "11" 
+0100 759394           13             MOV P0M1, #10010100b
+0103 7594FF           14             MOV P0M0, #11111111b
+0106 7591D3           15             MOV P1M1, #11010011b
+0109 7592FF           16             MOV P1M0, #11111111b
+                      17             
+                      18             ; switch all leds on
+010C 75806B           19             MOV P0,#01101011b
+010F 75902C           20             MOV P1,#00101100b
+                      21     
+                      22     ; ungefähr 1 sec bei 20MHz Tackt
+0112                  23     DELAY1S:
+0112 783F             24             MOV R0,#03Fh
+0114                  25     INNERLOOP1:
+0114 79FF             26             MOV R1,#0FFh
+0116                  27     INNERLOOP2:
+0116 75F0FF           28             MOV B,#0FFh
+0119 D5F0FD           29             DJNZ B, $  ; a loop for delay
+011C D9F8             30             DJNZ R1, INNERLOOP2
+011E D8F4             31             DJNZ R0, INNERLOOP1
+                      32             
+                      33             ;-- switch off the rows by setting the pins high
+                      34             ;ORL P0,#10010100b 
+                      35             ;ORL P1,#11010011b
+                      36             
+                      37             ;CPL P0 and P1 (to switch on/off all leds
+0120 E580             38             MOV A, P0
+0122 F4               39             CPL A
+0123 F580             40             MOV P0, A
+0125 E590             41             MOV A, P1
+0127 F4               42             CPL A
+0128 F590             43             MOV P1, A
+012A 020112           44             LJMP DELAY1S
+                      45             
+                      46             ; print the VRAM content to P0.0-8 and P1.0-8
+012D 900136           47             MOV DPTR, #VRAM_DATA
+                      48             
+0130 E4               49             CLR A
+0131 93               50             MOVC A, @A+DPTR  ; MOVC  Move Code!
+                      51             
+                      52     
+                      53     
+                      54     
+                      55     
+                      56     
+                      57     
+A51 MACRO ASSEMBLER  SIMPLE_VRAM02                                                        10/15/2026 09:43:56 PAGE     2
+
+                      58     
+                      59     
+                      60     
+                      61     
+                      62     
+                      63     
+                      64     
+                      65     
+                      66     
+                      67     
+                      68     
+                      69     
+                      70     
+                      71     
+                      72     
+                      73     
+                      74     
+                      75     
+                      76     
+                      77     
+                      78     
+                      79     
+                      80     
+                      81     
+                      82     
+                      83     
+                      84     
+0132                  85     MAIN_LOOP:
+0132 00               86             NOP
+0133 020132           87             LJMP MAIN_LOOP
+                      88     
+0136                  89     VRAM_DATA:
+0136 AA020304         90     DB 10101010b, 02h, 03h, 04h, 05h, 06h, 07h, 08h   
+013A 05060708                
+                      91     END
+                                     
+                                     
+A51 MACRO ASSEMBLER  SIMPLE_VRAM02                                                        10/15/2026 09:43:56 PAGE     3
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+B. . . . . . . . .  D ADDR   00F0H   A   
+DELAY1S. . . . . .  C ADDR   0112H   A   
+INNERLOOP1 . . . .  C ADDR   0114H   A   
+INNERLOOP2 . . . .  C ADDR   0116H   A   
+LMATRIX_1388A. . .  C ADDR   0100H   A   
+MAIN_LOOP. . . . .  C ADDR   0132H   A   
+P0 . . . . . . . .  D ADDR   0080H   A   
+P0M0 . . . . . . .  N NUMB   0094H   A   
+P0M1 . . . . . . .  N NUMB   0093H   A   
+P1 . . . . . . . .  D ADDR   0090H   A   
+P1M0 . . . . . . .  N NUMB   0092H   A   
+P1M1 . . . . . . .  N NUMB   0091H   A   
+VRAM_DATA. . . . .  C ADDR   0136H   A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)

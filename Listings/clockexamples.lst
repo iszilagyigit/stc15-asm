@@ -1,0 +1,81 @@
+A51 MACRO ASSEMBLER  CLOCKEXAMPLES                                                        10/12/2026 13:00:01 PAGE     1
+
+
+MACRO ASSEMBLER A51 V8.2.7.0
+OBJECT MODULE PLACED IN .\Objects\clockexamples.obj
+ASSEMBLER INVOKED BY: F:\MCU\STC15F2K60\Keil_v5\C51\BIN\A51.EXE clockexamples.a51 SET(SMALL) DEBUG PRINT(.\Listings\cloc
+                      kexamples.lst) OBJECT(.\Objects\clockexamples.obj) EP
+
+LOC  OBJ            LINE     SOURCE
+
+                       1     
+                       2     
+                       3     
+                       4     
+                       5     
+                       6     
+                       7     
+                       8     
+  0097                 9     CLK_DIV  EQU 097h ; Datasheet §2.1.3.1 page 206 
+  008F                10     INT_CLK0 EQU 08Fh ; Datasheet page 207
+  008E                11             AUXR EQU 08Eh ; 
+                      12     
+                      13     
+  FCA5                14     F14KHZ EQU 0FCA5h ; hex(int(0xFFFF - 24_000_000/2/14000)) by 24MHz CPU
+                      15             
+  FF10                16     F38_4KHz EQU 0FF10h  
+                      17     
+                      18     
+0000                  19     ORG 0000h
+0000 020100           20         LJMP SETUP
+                      21             
+0100                  22     ORG 0100H ; skipping from 00 to FF (first 256 bytes - mainly are SFRs or Interrupt handle c
+                             ode)
+0100                  23     SETUP:
+                      24     
+0100 7597C0           25             MOV CLK_DIV,  #11000000b 
+                      26             ; 11 - MCLK/4 output on MCLKO P5.4 (pint 17)
+0103 758F07           27             MOV INT_CLK0, #00000111b 
+                      28                     ;  P3.5/T1 configured for Timer 0(T0) T0_CLK0
+                      29                     ;  P3.4/T0 configured for Timer 1(T1) T1_CLK0
+                      30                     ;  P3.0/T2 configured for Timer 2(T2) T2_CLK0
+                      31                     
+0106 438E80           32             ORL    AUXR, #10000000b ;Timer 0 in 1T mode
+0109 758900           33             MOV    TMOD, #00H ;set Timer0 in mode 0 (16 bit auto-reloadable mode)
+010C 5389FB           34             ANL    TMOD, #11111011b ;C/T0=0, count on internal system clock
+010F 758AA5           35             MOV   TL0, #LOW F14KHz  
+0112 758CFC           36             MOV   TH0, #HIGH F14KHz
+0115 D28C             37             SETB  TR0
+                      38             ; In P3.5 (Pin 26)
+                      39             ; By 24MHZ CPU: TR0 - 14KHz, 50% Duty, Cycle:70us (0.070ms)
+                      40             
+0117                  41     MAIN_LOOP:
+0117 00               42             NOP
+0118 020117           43             LJMP MAIN_LOOP
+                      44             
+                      45     END
+A51 MACRO ASSEMBLER  CLOCKEXAMPLES                                                        10/12/2026 13:00:01 PAGE     2
+
+SYMBOL TABLE LISTING
+------ ----- -------
+
+
+N A M E             T Y P E  V A L U E   ATTRIBUTES
+
+AUXR . . . . . . .  N NUMB   008EH   A   
+CLK_DIV. . . . . .  N NUMB   0097H   A   
+F14KHZ . . . . . .  N NUMB   FCA5H   A   
+F38_4KHZ . . . . .  N NUMB   FF10H   A   
+INT_CLK0 . . . . .  N NUMB   008FH   A   
+MAIN_LOOP. . . . .  C ADDR   0117H   A   
+SETUP. . . . . . .  C ADDR   0100H   A   
+TH0. . . . . . . .  D ADDR   008CH   A   
+TL0. . . . . . . .  D ADDR   008AH   A   
+TMOD . . . . . . .  D ADDR   0089H   A   
+TR0. . . . . . . .  B ADDR   0088H.4 A   
+
+
+REGISTER BANK(S) USED: 0 
+
+
+ASSEMBLY COMPLETE.  0 WARNING(S), 0 ERROR(S)
