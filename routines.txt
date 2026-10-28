@@ -1,0 +1,15 @@
+; approx 1 sec (03Fh,FF,FF) bei 20MHz Tackt. DJNZ - 4clk, MOV - 3clk
+DELAY_100MS:
+	PUSH 00h ; PUSH R0
+	INNERLOOP1:
+	MOV R0,#011h  ; #0FFh - 1 sec, bei #030h flickers, 025h steady image
+	; by 25h  Freq: 53Hz (one cycle by row1 is ~19ms  (1000ms/53),
+    ;	 row is down for approx 2ms, duty cycle 87%
+	; by 21h  Freq: 59Hz (one cycle by row1 is ~17ms  (1000ms/59),
+	; by 11h   (21h - 10h (16)) Freq: 115Hz (~8.7ms)  (1000ms/115)
+	INNERLOOP2:
+	MOV B,#0FFh ; #0FFh - 1 sec
+	DJNZ B, $  ; a loop for delay
+	DJNZ R0, INNERLOOP2
+	POP 00h
+RET
