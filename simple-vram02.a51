@@ -46,6 +46,9 @@ SETUP:
 	MOV P0M0, #11111111b
 	MOV P1M1, #00000000b
 	MOV P1M0, #11111111b
+	; switch all rows to high (will switch off all rows)
+	ORL P0,#10010100b
+	ORL P1,#11010011b
 	
 ; Copy the PICTURE_8x8 from CODE to a "VRAM" (MOVC -> A -> MOVX)
 	MOV R0, 0 ; byte nr for picture 1..8
@@ -72,8 +75,26 @@ COPY_PICT_TO_VRAM:
 	; global rowcounter for display row REFRESH (value should be changed only by TIMER0_ROW_REFRESH_ISR )
 	MOV R7,0 
 	
-; MAIN loop
-	LJMP $
+MAIN: ; main loop
+	; rotate the eight byte in vram to left
+	MOV R0, 0
+	ROW_SHIFT:
+	MOV DPTR, #VRAM_ADDR
+	MOV DPL, R0
+	MOVX A, @DPTR
+	RL A
+	MOVX @DPTR,A
+	INC R0
+	
+	
+	MOV R1,#04h
+	DELAYX: 
+	MOV B,#0FFh ; #0FFh - 1 sec
+	DJNZ B, $  ; a loop for delay
+	DJNZ R1, DELAYX
+	
+	CJNE R0,#8,ROW_SHIFT
+	LJMP MAIN
 
 TIMER0_ROW_REFRESH_ISR:	
 	; --- Start the 'display refresh code ----
@@ -137,6 +158,7 @@ RETI
 
 
 PICTURE_8x8:
-DB 10101010b, 01010101b, 01100110b, 11010110b, 11110000b, 00100111b, 11100011b, 11111111b   
+;DB 10101010b, 01010101b, 01100110b, 11010110b, 11110000b, 00100111b, 11100011b, 11111111b   
+DB 00000001b, 00000010b, 00000100b, 00001000b, 00010000b, 00100000b, 01000000b, 10000000b   
 
 END
