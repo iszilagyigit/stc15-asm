@@ -74,9 +74,12 @@ COPY_PICT_TO_VRAM:
 	
 	; global rowcounter for display row REFRESH (value should be changed only by TIMER0_ROW_REFRESH_ISR )
 	MOV R7,0 
-	
+	SETB P3.2;  bit 3.2 for button to high (button with a 1kOhm will bring low to start the rotate)
 MAIN: ; main loop
+	JB P3.2, MAIN ; go to rotate only if P3.2 is low
+	
 	; rotate the eight byte in vram to left
+	ROTATE:
 	MOV R0, 0
 	ROW_SHIFT:
 	MOV DPTR, #VRAM_ADDR
@@ -86,8 +89,7 @@ MAIN: ; main loop
 	MOVX @DPTR,A
 	INC R0
 	
-	
-	MOV R1,#04h
+	MOV R1,#05h
 	DELAYX: 
 	MOV B,#0FFh ; #0FFh - 1 sec
 	DJNZ B, $  ; a loop for delay
@@ -101,6 +103,9 @@ TIMER0_ROW_REFRESH_ISR:
 	; the display will be a fast row by row display 
 	; in one loop only one row active
 	; print the VRAM content to P0.0-8 and P1.0-8
+	PUSH DPH
+	PUSH DPL
+	PUSH ACC
 	MOV DPTR, #VRAM_ADDR
 	; switch all rows to high (will switch off all rows)
 	ORL P0,#10010100b
@@ -153,6 +158,9 @@ TIMER0_ROW_REFRESH_ISR:
 	CJNE R7,#08h, TO_RETI ; Compare R0 with 8. If NOT equal, leave the ISR
 	MOV R7,#0 ; all row is refreshed - switch back to first row
 	TO_RETI:
+	POP ACC
+	POP DPL
+	POP DPH
 RETI
 ; --- ENDS 'display refresh code' ----
 
@@ -160,5 +168,6 @@ RETI
 PICTURE_8x8:
 ;DB 10101010b, 01010101b, 01100110b, 11010110b, 11110000b, 00100111b, 11100011b, 11111111b   
 DB 00000001b, 00000010b, 00000100b, 00001000b, 00010000b, 00100000b, 01000000b, 10000000b   
+;DB 00000001b, 00000001b, 00000001b, 00000001b, 00000001b, 00000001b, 00000001b, 00000001b   
 
 END
