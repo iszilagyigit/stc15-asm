@@ -66,12 +66,23 @@ SETUP:
 	; IMPORTANT: Value should be changed ONLY by TIMER0_ROW_REFRESH_ISR )
 	MOV R7,0 
 	
-	MOV R1, #8
+	MOV R1, #0
 	LCALL COPY_PICT_TO_VRAM
 	
-	SETB P3.2;  bit 3.2 for button to high (button with a 1kOhm will bring low to start the rotate)
+	SETB P3.2;  bit 3.2 for push-button (Start-to-rotate) to high (button with a 1kOhm will bring to low)
+	SETB P3.3;  bit 3.3 for push-button (switch image) to high 
 MAIN: ; main loop
+	JB P3.3, M2
+	; switch image (because button pressed!)
+	MOV A, R1
+	JZ N1
+	MOV R1,0
+	LJMP N2
+	N1: MOV R1,#8
+	N2: LCALL COPY_PICT_TO_VRAM
+M2:
 	JB P3.2, MAIN ; go to rotate only if P3.2 is low
+	
 	
 	; rotate the eight byte in vram to left
 	ROTATE:
@@ -83,12 +94,12 @@ MAIN: ; main loop
 	RL A
 	MOVX @DPTR,A
 	INC R0
-	
-	MOV R1,#05h
+
+	MOV R3,#05h
 	DELAYX: 
 	MOV B,#0FFh ; #0FFh - 1 sec
 	DJNZ B, $  ; a loop for delay
-	DJNZ R1, DELAYX
+	DJNZ R3, DELAYX
 	
 	CJNE R0,#8,ROW_SHIFT
 	LJMP MAIN
