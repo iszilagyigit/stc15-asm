@@ -50,17 +50,7 @@ SETUP:
 	ORL P0,#10010100b
 	ORL P1,#11010011b
 	
-; Copy the PICTURE_8x8 from CODE to a "VRAM" (MOVC -> A -> MOVX)
-	MOV R0, 0 ; byte nr for picture 1..8
-COPY_PICT_TO_VRAM:	
-	MOV A, R0
-	MOV DPTR, #PICTURE_8x8
-	MOVC A, @A+DPTR   ; from CODE to Accumulator
-	MOV DPTR, #VRAM_ADDR
-	MOV DPL, R0
-	MOVX @DPTR, A  ; the Accumulator to VRAM
-	INC R0
-	CJNE R0, #08, COPY_PICT_TO_VRAM
+
 	
 ; Configure TIMER0 and enable it
 	ORL    AUXR, #80H    ;1T Mode  (The clock source of Timer 0 is SYSclk/1)
@@ -72,8 +62,13 @@ COPY_PICT_TO_VRAM:
 	SETB   ET0  ; Enable Interrupt
 	SETB   EA
 	
-	; global rowcounter for display row REFRESH (value should be changed only by TIMER0_ROW_REFRESH_ISR )
+	; global rowcounter for display row REFRESH 
+	; IMPORTANT: Value should be changed ONLY by TIMER0_ROW_REFRESH_ISR )
 	MOV R7,0 
+	
+	MOV R1, #8
+	LCALL COPY_PICT_TO_VRAM
+	
 	SETB P3.2;  bit 3.2 for button to high (button with a 1kOhm will bring low to start the rotate)
 MAIN: ; main loop
 	JB P3.2, MAIN ; go to rotate only if P3.2 is low
@@ -97,6 +92,28 @@ MAIN: ; main loop
 	
 	CJNE R0,#8,ROW_SHIFT
 	LJMP MAIN
+
+
+; ========== Procedures ===========
+COPY_PICT_TO_VRAM:	
+	; param R1 the code offset for picture
+	; Copy the PICTURE_8x8 from CODE to a "VRAM" (MOVC -> A -> MOVX)
+	PUSH 00h ; R0
+	PUSH 01h ; R1
+	MOV R0,#0 ; index from 0 - 7
+	CPV_01:
+	MOV A, R1
+	MOV DPTR, #PICTURE_8x8
+	MOVC A, @A+DPTR   ; from CODE to Accumulator
+	MOV DPTR, #VRAM_ADDR
+	MOV DPL, R0
+	MOVX @DPTR, A  ; the Accumulator to VRAM
+	INC R0
+	INC R1
+	CJNE R0, #08, CPV_01
+	POP 01h ; R1
+	POP 00h ; R0
+	RET
 
 TIMER0_ROW_REFRESH_ISR:	
 	; --- Start the 'display refresh code ----
@@ -165,9 +182,8 @@ RETI
 ; --- ENDS 'display refresh code' ----
 
 
-PICTURE_8x8:
-;DB 10101010b, 01010101b, 01100110b, 11010110b, 11110000b, 00100111b, 11100011b, 11111111b   
-DB 00000001b, 00000010b, 00000100b, 00001000b, 00010000b, 00100000b, 01000000b, 10000000b   
-;DB 00000001b, 00000001b, 00000001b, 00000001b, 00000001b, 00000001b, 00000001b, 00000001b   
-
+PICTURE_8x8: ; pictures saved in code, 
+DB 01h, 02h, 04h, 08h, 10h, 20h, 40h, 80h ; a diagonal
+DB 3Ch, 42h, 81h, 99h, 99h, 81h, 42h, 3Ch ; a circle with a dot in it
+	
 END
