@@ -76,17 +76,17 @@ MAIN: ; main loop
 	; switch image (because button pressed!)
 	MOV A, R1
 	JZ N1
-	MOV R1,0
+	MOV R1,#0
 	LJMP N2
 	N1: MOV R1,#8
 	N2: LCALL COPY_PICT_TO_VRAM
+	JNB P3.3, $ ; wait for P3.3 release
 M2:
 	JB P3.2, MAIN ; go to rotate only if P3.2 is low
 	
-	
 	; rotate the eight byte in vram to left
 	ROTATE:
-	MOV R0, 0
+	MOV R0, #0
 	ROW_SHIFT:
 	MOV DPTR, #VRAM_ADDR
 	MOV DPL, R0
@@ -94,16 +94,15 @@ M2:
 	RL A
 	MOVX @DPTR,A
 	INC R0
-
-	MOV R3,#05h
-	DELAYX: 
-	MOV B,#0FFh ; #0FFh - 1 sec
-	DJNZ B, $  ; a loop for delay
-	DJNZ R3, DELAYX
-	
 	CJNE R0,#8,ROW_SHIFT
-	LJMP MAIN
+	
+	; another delay to decrease rotation speed.
+	MOV R3,#0FFh
+	DELAY2: MOV B,#0FFh ; #0FFh
+	DJNZ B, $  ; a loop for delay
+	DJNZ R3, DELAY2
 
+	LJMP MAIN
 
 ; ========== Procedures ===========
 COPY_PICT_TO_VRAM:	
