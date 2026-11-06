@@ -74,7 +74,7 @@ SETUP:
 MAIN: ; main loop
 	JB P3.3, M2  ; jump if bit set (button not pressed!)
 	; switch image (because button pressed!)
-	CJNE R1, #25, N1 ; sets also the C(arry) as C=1 the first operand is smaller, C=0 the first operand is equal or greather
+	CJNE R1, #65, N1 ; sets also the C(arry) as C=1 the first operand is smaller, C=0 the first operand is equal or greather ;(10pic - 2)*8 + 1
 	N1: JC INC8
 	MOV R1,#0
 DISPLAY:
@@ -198,10 +198,15 @@ RETI
 
 
 PICTURE_8x8: ; pictures saved in code, 
-DB 01h, 02h, 04h, 08h, 10h, 20h, 40h, 80h ; a diagonal
-DB 3Ch, 42h, 81h, 99h, 99h, 81h, 42h, 3Ch ; a circle with a dot in it
-DB 018h, 018h, 07Eh, 07Eh, 018h, 018h, 018h, 018h; a cross
-DB 010h, 028h, 044h, 082h, 041h, 022h, 014h, 008h; rechtangle
-DB 00Ch, 014h, 024h, 0C4h, 0C4h, 024h, 014h, 00Ch; triangle
+DB 001h, 002h, 004h, 008h, 010h, 020h, 040h, 080h ;1 a / slash
+DB 03Ch, 042h, 081h, 081h, 081h, 081h, 042h, 03Ch ;2 a circle
+DB 018h, 018h, 07Eh, 07Eh, 018h, 018h, 018h, 018h ;3 a cross
+DB 010h, 028h, 044h, 082h, 041h, 022h, 014h, 008h ;4 rechtangle
+DB 00Ch, 014h, 024h, 0C4h, 0C4h, 024h, 014h, 00Ch ;5 triangle
+DB 000h, 000h, 020h, 041h, 0FEh, 041h, 020h, 000h ;6 arrow left
+DB 000h, 000h, 004h, 082h, 07Fh, 082h, 004h, 000h ;7 arrow right
+DB 010h, 038h, 054h, 010h, 010h, 010h, 010h, 028h ;8 arrow up
+DB 028h, 010h, 010h, 010h, 010h, 054h, 038h, 010h ;9 arrow down
+DB 03Ch, 042h, 0A5h, 081h, 0A5h, 099h, 042h, 03Ch ;10 smiley
 	
 END
