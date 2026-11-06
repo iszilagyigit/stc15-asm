@@ -48,7 +48,7 @@ function update() {
     );
 
     outputHex.value = rows.map(bin =>
-        "#" + parseInt(bin, 2).toString(16).toUpperCase().padStart(2, "0") + "h"
+        "0" + parseInt(bin, 2).toString(16).toUpperCase().padStart(2, "0") + "h"
     ).join(", ");
 
     outputBin.value = rows.map(bin => bin + "b").join(", ");

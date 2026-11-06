@@ -67,20 +67,25 @@ SETUP:
 	MOV R7,0 
 	
 	MOV R1, #0
-	LCALL COPY_PICT_TO_VRAM
+	ACALL COPY_PICT_TO_VRAM ; initial image (absolute call within 2kb code-memory block)
 	
 	SETB P3.2;  bit 3.2 for push-button (Start-to-rotate) to high (button with a 1kOhm will bring to low)
 	SETB P3.3;  bit 3.3 for push-button (switch image) to high 
 MAIN: ; main loop
-	JB P3.3, M2
+	JB P3.3, M2  ; jump if bit set (button not pressed!)
 	; switch image (because button pressed!)
-	MOV A, R1
-	JZ N1
+	CJNE R1, #25, N1 ; sets also the C(arry) as C=1 the first operand is smaller, C=0 the first operand is equal or greather
+	N1: JC INC8
 	MOV R1,#0
-	LJMP N2
-	N1: MOV R1,#8
-	N2: LCALL COPY_PICT_TO_VRAM
-	JNB P3.3, $ ; wait for P3.3 release
+DISPLAY:
+	ACALL COPY_PICT_TO_VRAM
+	JNB P3.3, $ ; wait for P3.3 release (jump if bit not set)
+	SJMP M2	
+INC8:	
+	MOV A,R1
+	ADD A,#8
+	MOV R1,A
+	SJMP DISPLAY ; short relative jump (-128 to +128 bytes)
 M2:
 	JB P3.2, MAIN ; go to rotate only if P3.2 is low
 	
@@ -102,7 +107,7 @@ M2:
 	DJNZ B, $  ; a loop for delay
 	DJNZ R3, DELAY2
 
-	LJMP MAIN
+	SJMP MAIN
 
 ; ========== Procedures ===========
 COPY_PICT_TO_VRAM:	
@@ -139,26 +144,26 @@ TIMER0_ROW_REFRESH_ISR:
 	ORL P1,#11010011b
 	CJNE R7,#0,RW2
 	CLR P0.7 ; row1 on
-	LJMP CX
+	SJMP CX
 	RW2:	
     CJNE R7,#1,RW3
 	CLR P0.2 ; row2
-	LJMP CX
+	SJMP CX
 	RW3:CJNE R7,#2,RW4
 	CLR P1.7; row3
-	LJMP CX
+	SJMP CX
 	RW4:CJNE R7,#3,RW5
 	CLR P0.4; row4
-	LJMP CX
+	SJMP CX
 	RW5:CJNE R7,#4,RW6
 	CLR P1.0; row5
-	LJMP CX
+	SJMP CX
 	RW6:CJNE R7,#5,RW7
 	CLR P1.6; row6
-	LJMP CX
+	SJMP CX
 	RW7:CJNE R7,#6,RW8
 	CLR P1.1; row7
-	LJMP CX
+	SJMP CX
 	RW8:CLR P1.4; row 8
 	CX:	
 	MOV DPL, R7
@@ -195,5 +200,8 @@ RETI
 PICTURE_8x8: ; pictures saved in code, 
 DB 01h, 02h, 04h, 08h, 10h, 20h, 40h, 80h ; a diagonal
 DB 3Ch, 42h, 81h, 99h, 99h, 81h, 42h, 3Ch ; a circle with a dot in it
+DB 018h, 018h, 07Eh, 07Eh, 018h, 018h, 018h, 018h; a cross
+DB 010h, 028h, 044h, 082h, 041h, 022h, 014h, 008h; rechtangle
+DB 00Ch, 014h, 024h, 0C4h, 0C4h, 024h, 014h, 00Ch; triangle
 	
 END
