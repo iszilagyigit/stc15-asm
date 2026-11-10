@@ -12,7 +12,7 @@ Display LED 8x8 pins 1388AS
  (die A... is printed at bottom..)
 */
 
-; STC15F2K60S2 specifies 1,792 bytes of on-chip XRAM at 0000H–06FFH.	
+; STC15F2K60S2 specifies 1,792 bytes of on-chip XRAM at 0000Hâ€“06FFH.	
 VRAM_ADDR EQU 0600H; ; just some 16bit address in the OnChip internal RAM
 
 ; Register values from Datasheet
@@ -74,7 +74,7 @@ SETUP:
 MAIN: ; main loop
 	JB P3.3, M2  ; jump if bit set (button not pressed!)
 	; switch image (because button pressed!)
-	CJNE R1, #65, N1 ; sets also the C(arry) as C=1 the first operand is smaller, C=0 the first operand is equal or greather ;(10pic - 2)*8 + 1
+	CJNE R1, #153, N1 ; sets also the C(arry) as C=1 the first operand is smaller, C=0 the first operand is equal or greather ;(21pic - 2)*8 + 1
 	N1: JC INC8
 	MOV R1,#0
 DISPLAY:
@@ -200,6 +200,8 @@ RETI
 PICTURE_8x8: ; pictures saved in code, 
 DB 001h, 002h, 004h, 008h, 010h, 020h, 040h, 080h ;1 a / slash
 DB 03Ch, 042h, 081h, 081h, 081h, 081h, 042h, 03Ch ;2 a circle
+DB 000h, 001h, 072h, 08Ch, 08Ch, 072h, 001h, 000h ; alpha
+DB 03Ch, 042h, 081h, 081h, 042h, 024h, 0E7h, 000h ; omega
 DB 018h, 018h, 07Eh, 07Eh, 018h, 018h, 018h, 018h ;3 a cross
 DB 010h, 028h, 044h, 082h, 041h, 022h, 014h, 008h ;4 rechtangle
 DB 00Ch, 014h, 024h, 0C4h, 0C4h, 024h, 014h, 00Ch ;5 triangle
@@ -208,5 +210,17 @@ DB 000h, 000h, 004h, 082h, 07Fh, 082h, 004h, 000h ;7 arrow right
 DB 010h, 038h, 054h, 010h, 010h, 010h, 010h, 028h ;8 arrow up
 DB 028h, 010h, 010h, 010h, 010h, 054h, 038h, 010h ;9 arrow down
 DB 03Ch, 042h, 0A5h, 081h, 0A5h, 099h, 042h, 03Ch ;10 smiley
-	
+DB 008h, 018h, 028h, 008h, 008h, 008h, 008h, 01Ch ; one
+DB 038h, 044h, 044h, 004h, 008h, 010h, 020h, 07Eh ; two
+DB 038h, 004h, 004h, 018h, 018h, 004h, 004h, 038h ; three
+DB 008h, 010h, 024h, 044h, 07Eh, 004h, 004h, 000h ; four
+DB 03Eh, 020h, 020h, 01Ch, 002h, 002h, 002h, 03Ch ; five
+DB 01Ch, 020h, 020h, 03Ch, 022h, 022h, 022h, 01Ch ; six
+DB 000h, 03Eh, 002h, 004h, 008h, 010h, 020h, 000h ; seven
+DB 01Ch, 022h, 022h, 01Ch, 022h, 022h, 022h, 01Ch ; eight
+DB 01Ch, 022h, 022h, 01Ch, 002h, 002h, 002h, 01Ch ; nine
+
+
+
+
 END
