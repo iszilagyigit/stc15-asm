@@ -205,10 +205,10 @@ DB 03Ch, 042h, 081h, 081h, 042h, 024h, 0E7h, 000h ; omega
 DB 018h, 018h, 07Eh, 07Eh, 018h, 018h, 018h, 018h ;3 a cross
 DB 010h, 028h, 044h, 082h, 041h, 022h, 014h, 008h ;4 rechtangle
 DB 00Ch, 014h, 024h, 0C4h, 0C4h, 024h, 014h, 00Ch ;5 triangle
-DB 000h, 000h, 020h, 041h, 0FEh, 041h, 020h, 000h ;6 arrow left
-DB 000h, 000h, 004h, 082h, 07Fh, 082h, 004h, 000h ;7 arrow right
-DB 010h, 038h, 054h, 010h, 010h, 010h, 010h, 028h ;8 arrow up
-DB 028h, 010h, 010h, 010h, 010h, 054h, 038h, 010h ;9 arrow down
+DB 000h, 000h, 020h, 040h, 0FCh, 040h, 020h, 000h ;6 arrow left
+DB 000h, 000h, 004h, 002h, 03Fh, 002h, 004h, 000h ;7 arrow right
+DB 010h, 038h, 054h, 010h, 010h, 010h, 000h, 000h ;8 arrow up
+DB 000h, 000h, 010h, 010h, 010h, 054h, 038h, 010h ;9 arrow down
 DB 03Ch, 042h, 0A5h, 081h, 0A5h, 099h, 042h, 03Ch ;10 smiley
 DB 008h, 018h, 028h, 008h, 008h, 008h, 008h, 01Ch ; one
 DB 038h, 044h, 044h, 004h, 008h, 010h, 020h, 07Eh ; two
